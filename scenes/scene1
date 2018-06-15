@@ -21,7 +21,7 @@ objects {
 lights {
 #id = 0
 Light:
-	position = -0.0, -25.0, 60.0
+	position = -110.0, -25.0, 60.0
 
 #id = 1
 Light:

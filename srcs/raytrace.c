@@ -12,7 +12,7 @@
 
 #include "../includes/rtv1.h"
 
-void	lambert(t_math *m, t_mtr *cur_m, t_env *e)
+double	lambert(t_math *m, t_mtr *cur_m, t_env *e)
 {
 	float		lambert;
 	int			i;
@@ -72,10 +72,10 @@ void	find_light_value(t_math *m, t_env *e, t_mtr *c_m)
 		cur_l = e->lights[j];
 		dist = vector_sub(cur_l.pos, m->new_start);
 		tmp_dist = vector_len(dist);
-		// m->new_start = vector_scale(0.001, m->new_start);
+		m->new_start = vector_scale(0.00001, m->new_start);
 		m->t = sqrtf(vector_dot(dist, dist));
-		// if (vector_dot(m->norm, dist) <= 0.0f || (m->t <= 0.0f && m->t > 1.0f))
-		// 	continue ;
+		if (vector_dot(m->norm, dist) <= 0.0f || (m->t <= 0.0f && m->t > 1.0f))
+			continue ;
 		m->l_ray.start = m->new_start;
 		m->l_ray.dir = dist;
 		m->l_ray.dir = unit_vector(&m->l_ray.dir);
