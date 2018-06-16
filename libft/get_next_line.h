@@ -3,20 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atilegen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dmisnich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/31 12:38:48 by atilegen          #+#    #+#             */
-/*   Updated: 2018/04/05 15:14:23 by atilegen         ###   ########.fr       */
+/*   Created: 2018/01/03 11:12:11 by dmisnich          #+#    #+#             */
+/*   Updated: 2018/01/03 11:12:13 by dmisnich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# include <unistd.h>
+# define BUFF_SIZE  1
+
 # include <fcntl.h>
+# include <stdlib.h>
+# include <unistd.h>
 
-# define BUFF_SIZE 10000
+typedef struct	s_gnl
+{
+	int				fd;
+	char			*str;
+	struct s_gnl	*next;
+}				t_gnl;
 
-int get_next_line(const int fd, char **line);
+int				get_next_line(const int fd, char **line);
 
 #endif

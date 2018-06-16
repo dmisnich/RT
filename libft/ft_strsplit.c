@@ -3,72 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strsplit.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atilegen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dmisnich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/22 12:34:58 by atilegen          #+#    #+#             */
-/*   Updated: 2018/03/25 17:40:25 by atilegen         ###   ########.fr       */
+/*   Created: 2017/11/09 11:14:31 by dmisnich          #+#    #+#             */
+/*   Updated: 2017/11/09 11:14:34 by dmisnich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int		splits(const char *str, char c)
-{
-	int count;
-	int i;
-
-	i = 1;
-	if (*str == '\0')
-		return (0);
-	count = 0;
-	if (str[0] != c)
-		count++;
-	while (str[i])
-	{
-		if (str[i] != c && str[i - 1] == c)
-			count++;
-		i++;
-	}
-	return (count);
-}
-
-static int		len(const char *str, int j, int c)
-{
-	int k;
-
-	k = 0;
-	while (str[j] != c && str[j])
-	{
-		j++;
-		k++;
-	}
-	return (k);
-}
-
 char			**ft_strsplit(char const *s, char c)
 {
-	char	**arr;
-	int		w;
-	int		j;
 	int		i;
+	int		j;
+	char	**string;
 
-	i = 0;
+	i = -1;
 	j = 0;
-	if (!s)
-		return (0);
-	arr = (char**)malloc(sizeof(char*) * (splits(s, c) + 1));
-	if (!arr)
-		return (0);
-	while (i < splits(s, c))
+	if (s == NULL)
+		return (NULL);
+	if (!(string = (char**)malloc(sizeof(char*) * (ft_word_len(s, c) + 1))))
+		return (NULL);
+	while (++i < ft_word_len(s, c))
 	{
-		while (s[j] == c && s[j])
+		while (s[j] == c)
 			j++;
-		w = 0;
-		arr[i] = malloc(sizeof(char) * (len(s, j, c) + 1));
-		while (s[j] != c && s[j])
-			arr[i][w++] = s[j++];
-		arr[i++][w] = '\0';
+		if (!(*(string + i) = ft_strsub(s, j, ft_char_len(s, j, c))))
+		{
+			ft_free_arr(&string);
+			return (NULL);
+		}
+		while (s[j] != c && s[j] != '\0')
+			j++;
 	}
-	arr[i] = 0;
-	return (arr);
+	string[ft_word_len(s, c)] = NULL;
+	return (string);
 }

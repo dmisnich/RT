@@ -3,71 +3,108 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atilegen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dmisnich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/31 12:38:39 by atilegen          #+#    #+#             */
-/*   Updated: 2018/04/14 19:49:57 by atilegen         ###   ########.fr       */
+/*   Created: 2018/01/03 11:11:35 by dmisnich          #+#    #+#             */
+/*   Updated: 2018/01/03 11:11:37 by dmisnich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "get_next_line.h"
 
-int		to_line(char **heap, char **line)
+int				ft_len(char *str)
 {
-	char *check;
-	char *temp;
+	int	i;
 
-	check = ft_strchr(*heap, '\n');
-	if (check)
-	{
-		temp = *heap;
-		*line = ft_strndup(temp, check - temp);
-		*heap = ft_strsub(temp, check - temp + 1,
-				ft_strlen(temp) - (check - temp) + 1);
-		free(temp);
-		return (1);
-	}
-	return (0);
+	i = 0;
+	while (str[i] && str[i] != '\n')
+		i++;
+	return (i);
 }
 
-int		to_stack(char **heap, char **line, char *buf, int ret)
+t_gnl			*lst_new(void const *content, ssize_t size)
 {
-	char		*str;
+	t_gnl *head;
 
-	buf[ret] = '\0';
-	if (*heap == 0)
-		*heap = ft_strdup(buf);
+	head = (t_gnl *)malloc(sizeof(t_gnl));
+	if (head == NULL)
+		return (NULL);
+	if (content == NULL)
+	{
+		head->str = NULL;
+		head->fd = 0;
+		head->next = NULL;
+	}
 	else
 	{
-		str = *heap;
-		*heap = ft_strjoin(*heap, buf);
-		free(str);
+		head->str = (void *)malloc(size);
+		if (head->str == NULL)
+			return (NULL);
+		ft_memcpy(head->str, (void *)content, size);
+		head->fd = size;
+		head->next = NULL;
 	}
-	if (to_line(heap, line))
-		return (1);
-	return (0);
+	return (head);
 }
 
-int		get_next_line(const int fd, char **line)
+static t_gnl	*sort_list(int fd, t_gnl **lst)
 {
-	static char	*heap[256];
-	int			ret;
-	char		buf[BUFF_SIZE + 1];
+	t_gnl *head;
 
-	if (fd < 0 || read(fd, 0, 0) < 0 || fd > 256)
-		return (-1);
-	if (heap[fd] != NULL)
-		if (to_line(&heap[fd], line))
-			return (1);
-	while ((ret = read(fd, buf, BUFF_SIZE)) > 0)
-		if (to_stack(&heap[fd], line, buf, ret))
-			return (1);
-	if (heap[fd] == NULL)
+	head = *lst;
+	while (head)
+	{
+		if (head->fd == fd)
+			return (head);
+		head = head->next;
+	}
+	head = lst_new("", 1);
+	head->next = *lst;
+	*lst = head;
+	(*lst)->fd = fd;
+	return (*lst);
+}
+
+static int		search_and_read(int fd, t_gnl *lst, char **line, char *buf)
+{
+	ssize_t		ret;
+	char		*tmp;
+
+	while ((ret = read(fd, buf, BUFF_SIZE)))
+	{
+		if (ret == -1)
+			return (-1);
+		buf[ret] = '\0';
+		tmp = lst->str;
+		lst->str = ft_strjoin(lst->str, buf);
+		free(tmp);
+		if (ft_strchr(buf, '\n'))
+			break ;
+	}
+	if (buf)
+		free(buf);
+	if (!ret && !ft_strlen(lst->str))
 		return (0);
-	if (*heap[fd] == '\0')
-		return (0);
-	*line = ft_strdup(heap[fd]);
-	ft_memdel((void **)&heap[fd]);
+	*line = ft_strsub(lst->str, 0, ft_len(lst->str));
+	tmp = lst->str;
+	lst->str = ft_strsub(lst->str, ft_len(lst->str) + 1,
+		ft_strlen(lst->str) - ft_strlen(*line));
+	free(tmp);
 	return (1);
+}
+
+int				get_next_line(const int fd, char **line)
+{
+	static t_gnl	*lst;
+	t_gnl			*file;
+	char			*buf;
+	int				ret;
+
+	if (fd < 0 || BUFF_SIZE <= 0 || !line)
+		return (-1);
+	if (!(buf = (char *)malloc(BUFF_SIZE + 1)))
+		return (-1);
+	file = sort_list(fd, &lst);
+	ret = search_and_read(fd, file, line, buf);
+	return (ret);
 }

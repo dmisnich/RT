@@ -3,61 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atilegen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dmisnich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/22 14:09:13 by atilegen          #+#    #+#             */
-/*   Updated: 2018/03/25 17:56:58 by atilegen         ###   ########.fr       */
+/*   Created: 2017/11/09 10:44:45 by dmisnich          #+#    #+#             */
+/*   Updated: 2017/11/09 10:44:52 by dmisnich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	ft_abs(int n)
+static char		*ft_change(char *res, int i, int j, long int nb1)
 {
-	if (n < 0)
-		n *= -1;
-	return (n);
-}
-
-static int	len(int n)
-{
-	int i;
-
-	i = 0;
-	if (n == 0)
-		return (1);
-	while (n > 0)
+	while (i > 0)
 	{
-		i++;
-		n /= 10;
+		res[j++] = (nb1 / i) + '0';
+		nb1 = nb1 % i;
+		i = i / 10;
 	}
-	return (i);
-}
-
-char		*ft_itoa(int n)
-{
-	char	*res;
-	int		ali;
-	int		neg;
-
-	neg = n;
-	if (n == -2147483648)
-		return (ft_strdup("-2147483648"));
-	n = ft_abs(n);
-	ali = len(n);
-	if (neg < 0)
-		res = (char *)malloc(ali++ + 2);
-	else
-		res = (char *)malloc(ali + 1);
-	if (!res)
-		return (NULL);
-	res[ali] = '\0';
-	while (ali--)
-	{
-		res[ali] = n % 10 + '0';
-		n = n / 10;
-	}
-	if (neg < 0)
-		res[0] = '-';
 	return (res);
+}
+
+char			*ft_itoa(int nb)
+{
+	unsigned int	i;
+	int				j;
+	int				size;
+	char			*res;
+	long int		nb1;
+
+	i = 1;
+	nb1 = (long int)nb;
+	j = 0;
+	size = 1;
+	if (nb < 0)
+	{
+		nb1 = nb1 * -1;
+		j = 1;
+	}
+	while ((nb1 / i) > 9 && size++)
+		i = i * 10;
+	res = ft_strnew(size + j);
+	if (res == NULL)
+		return (NULL);
+	if (j)
+		res[0] = '-';
+	return (ft_change(res, i, j, nb1));
 }

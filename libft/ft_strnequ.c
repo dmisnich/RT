@@ -3,22 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strnequ.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atilegen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dmisnich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/22 22:21:07 by atilegen          #+#    #+#             */
-/*   Updated: 2018/03/25 22:28:14 by atilegen         ###   ########.fr       */
+/*   Created: 2017/11/08 16:16:58 by dmisnich          #+#    #+#             */
+/*   Updated: 2017/11/08 16:16:59 by dmisnich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int		ft_strnequ(char const *s1, char const *s2, size_t n)
+int		ft_strnequ(char const *s1, char const *s2, size_t len)
 {
-	if (n == 0)
-		return (1);
-	if (!s1 || !s2)
+	size_t i;
+
+	i = 0;
+	if (s1 == NULL || s2 == NULL)
 		return (0);
-	if (ft_strncmp(s1, s2, n) == 0)
-		return (1);
-	return (0);
+	while (i < len && (s1[i] != '\0' || s2[i] != '\0'))
+	{
+		if (s1[i] != s2[i])
+			return (0);
+		i++;
+	}
+	return (1);
 }

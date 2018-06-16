@@ -3,40 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atilegen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dmisnich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/20 17:15:46 by atilegen          #+#    #+#             */
-/*   Updated: 2018/04/23 17:13:03 by atilegen         ###   ########.fr       */
+/*   Created: 2017/11/03 14:13:23 by dmisnich          #+#    #+#             */
+/*   Updated: 2017/11/03 14:13:25 by dmisnich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int		ft_atoi(char *str)
+static int		ft_whitespace(char c)
 {
-	long long int	res;
-	int				i;
-	long long int	n;
+	return (c == '\n' || c == '\t' || c == '\r'
+		|| c == ' ' || c == '\v' || c == '\f');
+}
 
-	res = 1;
+int				ft_atoi(const char *str)
+{
+	unsigned int		i;
+	unsigned long int	result;
+	int					minus;
+
+	minus = 1;
 	i = 0;
-	n = 0;
-	while ((str[i] == ' ' || str[i] == '\t' || str[i] == '\r' ||
-			str[i] == '\f' || str[i] == '\v' || str[i] == '\n') && str[i])
+	result = 0;
+	while (ft_whitespace(str[i]))
 		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			res = -1;
+	if (str[i] == '-')
+		minus = -1;
+	if (str[i] == '+' || str[i] == '-')
 		i++;
-	}
-	while (str[i] >= 48 && str[i] <= 57 && n >= 0)
-		n = n * 10 + (long long int)(str[i++] - '0');
-	if (n < 0)
+	while (str[i] != '\0' && ft_isdigit(str[i]))
 	{
-		if (res == -1)
+		if ((result > 922337203685477580 || (result == 922337203685477580
+		&& (str[i] - '0') > 7)) && minus == 1)
+			return (-1);
+		else if ((result > 922337203685477580 || (result == 922337203685477580
+		&& (str[i] - '0') > 8)) && minus == -1)
 			return (0);
-		return (-1);
+		result = (result * 10) + (str[i] - '0');
+		i++;
 	}
-	return ((int)n * (int)res);
+	return ((int)result * minus);
 }

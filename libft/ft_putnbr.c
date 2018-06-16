@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putnbr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atilegen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dmisnich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/12 10:59:49 by atilegen          #+#    #+#             */
-/*   Updated: 2018/03/22 16:38:43 by atilegen         ###   ########.fr       */
+/*   Created: 2017/11/10 13:57:59 by dmisnich          #+#    #+#             */
+/*   Updated: 2017/11/10 13:58:02 by dmisnich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,22 @@
 
 void	ft_putnbr(int nb)
 {
-	if (nb == -2147483648)
-		ft_putstr("-2147483648");
-	else if (nb < 0)
+	unsigned int	i;
+	char			res;
+
+	i = 1;
+	if (nb < 0)
 	{
-		ft_putchar('-');
-		nb *= -1;
-		ft_putnbr(nb);
+		write(1, "-", 1);
+		nb = nb * -1;
 	}
-	else if (nb >= 10)
+	while ((nb / i) > 9)
+		i = i * 10;
+	while (i > 0)
 	{
-		ft_putnbr(nb / 10);
-		ft_putchar(nb % 10 + '0');
-	}
-	else
-	{
-		ft_putchar(nb + '0');
+		res = (nb / i) + '0';
+		nb = nb % i;
+		i = i / 10;
+		write(1, &res, 1);
 	}
 }

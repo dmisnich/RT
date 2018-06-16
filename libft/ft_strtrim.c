@@ -3,49 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atilegen <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dmisnich <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/22 12:29:19 by atilegen          #+#    #+#             */
-/*   Updated: 2018/03/26 00:04:26 by atilegen         ###   ########.fr       */
+/*   Created: 2017/11/08 14:08:04 by dmisnich          #+#    #+#             */
+/*   Updated: 2017/11/08 14:08:05 by dmisnich         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static void		ali(char const *s, int *start, int *last)
+char	*ft_strtrim(char const *s)
 {
-	while (s[*start])
-	{
-		if (s[*start] != '\n' && s[*start] != ' ' && s[*start] != '\t')
-			break ;
-		*start = *start + 1;
-	}
-	while (s[*last] && *last + 1 >= *start)
-	{
-		if (s[*last] != '\n' && s[*last] != ' ' && s[*last] != '\t')
-			break ;
-		*last = *last - 1;
-	}
-}
+	size_t		i;
+	int			j;
+	int			k;
+	int			size;
+	char		*string;
 
-char			*ft_strtrim(char const *s)
-{
-	int		start;
-	int		last;
-	char	*res;
-	int		i;
-
-	if (!s)
-		return (0);
-	last = ft_strlen(s) - 1;
-	start = 0;
-	ali(s, &start, &last);
-	res = ft_strnew(last - start + 1);
-	if (!res)
+	if (s == NULL)
 		return (NULL);
-	i = 0;
-	while (start <= last)
-		res[i++] = s[start++];
-	res[i] = '\0';
-	return (res);
+	i = ft_strlen(s);
+	j = 0;
+	k = 0;
+	while (s[j] == '\n' || s[j] == '\t' || s[j] == ' ')
+		j++;
+	while (s[i - 1] == '\n' || s[i - 1] == '\t' || s[i - 1] == ' ')
+		i--;
+	if (i <= 0)
+		size = j;
+	else
+		size = i - j;
+	string = ft_strnew(size);
+	if (string == NULL)
+		return (NULL);
+	while (k != size)
+		string[k++] = s[j++];
+	return (string);
 }
